@@ -1,0 +1,35 @@
+{% extends "accounting/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Overview</h1>
+<p class="muted">Your income, expenses, and GST records at a glance.</p>
+<section class="stats">
+    <div class="card">Total income<strong>{{ total_income|floatformat:2 }}</strong></div>
+    <div class="card">Total expenses<strong>{{ total_expenses|floatformat:2 }}</strong></div>
+    <div class="card">Net balance<strong>{{ net_balance|floatformat:2 }}</strong></div>
+</section>
+<div class="actions">
+    <a class="button" href="{% url 'accounting:add_transaction' %}">Add transaction</a>
+    <a class="button" href="{% url 'accounting:gst_report' %}">Download GST report</a>
+    <a class="button" href="{% url 'accounting:analytics' %}">Financial insights</a>
+</div>
+<h2>Transactions</h2>
+{% if transactions %}
+<table>
+    <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Type</th><th>Amount</th><th>GST</th><th>Bill</th></tr></thead>
+    <tbody>
+    {% for item in transactions %}
+        <tr>
+            <td>{{ item.date }}</td><td>{{ item.description|truncatechars:70 }}</td>
+            <td>{{ item.category|default:"Uncategorized" }}</td><td>{{ item.type }}</td>
+            <td>{{ item.amount|floatformat:2 }}</td>
+            <td>{% for record in item.gst_records.all %}{{ record.gst_amount|floatformat:2 }}{% empty %}—{% endfor %}</td>
+            <td><a href="{% url 'accounting:gst_bill' item.pk %}">Download</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="card">No transactions yet. Add your first income or expense to get started.</p>
+{% endif %}
+{% endblock %}

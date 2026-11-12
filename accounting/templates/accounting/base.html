@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}FinTrack{% endblock %} · FinTrack</title>
+    <style>
+        :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #172b3a; background: #f4f7fa; }
+        body { margin: 0; }
+        header { background: #15324b; color: white; padding: 1rem max(1rem, calc((100% - 1100px) / 2)); }
+        header a { color: white; text-decoration: none; font-weight: 650; }
+        nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: .75rem; }
+        nav a { font-size: .92rem; font-weight: 500; opacity: .9; }
+        main { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+        h1 { margin-top: 0; }
+        .card, form, table { background: white; border: 1px solid #dce5ec; border-radius: 10px; }
+        .card, form { padding: 1.25rem; }
+        .stats { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1rem 0 1.5rem; }
+        .stats .card { min-width: 180px; }
+        .stats strong { display: block; font-size: 1.35rem; margin-top: .35rem; }
+        .actions { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1rem 0; }
+        a.button, button { display: inline-block; border: 0; border-radius: 6px; background: #176b87; color: white; padding: .65rem .9rem; text-decoration: none; cursor: pointer; font: inherit; }
+        input, select, textarea { box-sizing: border-box; max-width: 100%; padding: .55rem; border: 1px solid #b9c9d5; border-radius: 5px; }
+        label { display: block; margin: .8rem 0 .25rem; font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; overflow: hidden; }
+        th, td { padding: .75rem; text-align: left; border-bottom: 1px solid #e4ebf0; }
+        th { background: #eaf1f6; }
+        .message { padding: .8rem 1rem; background: #e5f5ec; border-radius: 6px; margin-bottom: 1rem; }
+        .error { color: #a32626; }
+        .muted { color: #5c6e7c; }
+        @media (max-width: 650px) { table { display: block; overflow-x: auto; } }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+<header>
+    <a href="{% url 'accounting:dashboard' %}">FinTrack · Accounting</a>
+    <nav aria-label="Main navigation">
+        <a href="{% url 'accounting:add_transaction' %}">Add transaction</a>
+        <a href="{% url 'accounting:add_category' %}">Categories</a>
+        <a href="{% url 'accounting:categorize' %}">Categorize</a>
+        <a href="{% url 'accounting:gst_report' %}">GST report</a>
+        <a href="{% url 'accounting:analytics' %}">Financial insights</a>
+        <a href="/admin/">Admin</a>
+    </nav>
+</header>
+<main>
+    {% if messages %}
+        {% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+</main>
+{% block scripts %}{% endblock %}
+</body>
+</html>

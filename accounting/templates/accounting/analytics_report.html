@@ -1,0 +1,48 @@
+{% extends "accounting/base.html" %}
+{% block title %}Financial insights{% endblock %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+{% block content %}
+<h1>Financial insights</h1>
+<p class="muted">AI-generated analysis of up to 24 months of transaction history. Use as guidance, not professional financial advice.</p>
+{% if error %}
+    <div class="card error" role="alert"><strong>Analytics unavailable:</strong> {{ error }}</div>
+{% else %}
+    <section class="card"><canvas id="finance-chart" aria-label="Historical and predicted income and expenses"></canvas></section>
+    <section class="card">
+        <h2>Predictions</h2>
+        <ul>{% for item in predictions %}<li>{{ item.month }} — income {{ item.income|floatformat:2 }}, expenses {{ item.expense|floatformat:2 }}</li>{% empty %}<li>No predictions were returned.</li>{% endfor %}</ul>
+        <h2>Insights</h2>
+        <ul>{% for item in insights %}<li>{{ item }}</li>{% empty %}<li>No insights were returned.</li>{% endfor %}</ul>
+        <h2>Recommendations</h2>
+        <ul>{% for item in recommendations %}<li>{{ item }}</li>{% empty %}<li>No recommendations were returned.</li>{% endfor %}</ul>
+    </section>
+{% endif %}
+{{ chart_data|json_script:"chart-data" }}
+{% endblock %}
+{% block scripts %}
+<script>
+const data = JSON.parse(document.getElementById("chart-data").textContent);
+const history = data.historical || [];
+const predictions = data.predictions || [];
+const labels = [...new Set([...history.map(item => item.month), ...predictions.map(item => item.month)])];
+if (document.getElementById("finance-chart") && window.Chart && labels.length) {
+    const values = (items, key) => Object.fromEntries(items.map(item => [item.month, item[key]]));
+    const historicalIncome = values(history, "income");
+    const historicalExpense = values(history, "expense");
+    const predictedIncome = values(predictions, "income");
+    const predictedExpense = values(predictions, "expense");
+    new Chart(document.getElementById("finance-chart"), {
+        type: "line",
+        data: { labels, datasets: [
+            { label: "Historical income", data: labels.map(label => historicalIncome[label] ?? null), borderColor: "#176b87", spanGaps: false },
+            { label: "Historical expenses", data: labels.map(label => historicalExpense[label] ?? null), borderColor: "#c05b4d", spanGaps: false },
+            { label: "Predicted income", data: labels.map(label => predictedIncome[label] ?? null), borderColor: "#176b87", borderDash: [6, 4], spanGaps: false },
+            { label: "Predicted expenses", data: labels.map(label => predictedExpense[label] ?? null), borderColor: "#c05b4d", borderDash: [6, 4], spanGaps: false }
+        ] },
+        options: { responsive: true, interaction: { mode: "index", intersect: false } }
+    });
+}
+</script>
+{% endblock %}

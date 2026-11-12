@@ -1,0 +1,10 @@
+{% extends "accounting/base.html" %}
+{% block title %}Categories{% endblock %}
+{% block content %}
+<h1>Add a category</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save category</button>
+</form>
+{% endblock %}

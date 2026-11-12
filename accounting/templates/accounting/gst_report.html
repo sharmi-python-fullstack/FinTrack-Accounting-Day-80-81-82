@@ -1,0 +1,10 @@
+{% extends "accounting/base.html" %}
+{% block title %}GST report{% endblock %}
+{% block content %}
+<h1>GST report</h1>
+<p class="muted">Choose optional filters, then download a PDF summary of taxable amounts and GST.</p>
+<form method="get">
+    {{ form.as_p }}
+    <button type="submit">Generate PDF report</button>
+</form>
+{% endblock %}

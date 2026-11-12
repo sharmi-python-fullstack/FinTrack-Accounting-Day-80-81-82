@@ -1,0 +1,33 @@
+{% extends "accounting/base.html" %}
+{% block title %}Categorize transactions{% endblock %}
+{% block content %}
+<h1>Categorize transactions</h1>
+{% if transactions %}
+<table>
+    <thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Category</th></tr></thead>
+    <tbody>
+    {% for item in transactions %}
+        <tr>
+            <td>{{ item.date }}</td><td>{{ item.description|truncatechars:70 }}</td><td>{{ item.amount|floatformat:2 }}</td>
+            <td>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="transaction_id" value="{{ item.pk }}">
+                    <label for="category-{{ item.pk }}">Category</label>
+                    <select id="category-{{ item.pk }}" name="category">
+                        <option value="">Uncategorized</option>
+                        {% for category in categories %}
+                            <option value="{{ category.pk }}" {% if item.category_id == category.pk %}selected{% endif %}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Save</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="card">There are no transactions to categorize.</p>
+{% endif %}
+{% endblock %}

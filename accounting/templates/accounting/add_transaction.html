@@ -1,0 +1,11 @@
+{% extends "accounting/base.html" %}
+{% block title %}Add transaction{% endblock %}
+{% block content %}
+<h1>Add a transaction</h1>
+<p class="muted">GST is calculated at {{ gst_percentage|default:"18" }}% and the running ledger is updated automatically.</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save transaction</button>
+</form>
+{% endblock %}
