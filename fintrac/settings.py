@@ -90,10 +90,14 @@ WSGI_APPLICATION = 'fintrac.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+DATABASE_PATH = Path(os.environ.get("DATABASE_PATH", BASE_DIR / "db.sqlite3"))
+if str(DATABASE_PATH) != ":memory:":
+    DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.environ.get('DATABASE_PATH', BASE_DIR / 'db.sqlite3'),
+        'NAME': DATABASE_PATH,
     }
 }
 
